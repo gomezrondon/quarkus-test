@@ -1,0 +1,61 @@
+// this block is necessary to make enforcedPlatform work for Quarkus plugin available
+// only locally (snapshot) that is also importing the Quarkus BOM
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "io.quarkus:quarkus-gradle-plugin:${quarkusVersion}"
+    }
+}
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version "1.3.21"
+}
+
+apply plugin: 'io.quarkus'
+
+repositories {
+     mavenLocal()
+     mavenCentral()
+}
+
+dependencies {
+    implementation("org.beryx:text-io:3.3.0")
+    implementation 'io.quarkus:quarkus-kotlin'
+    implementation 'io.quarkus:quarkus-core'
+    implementation enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}")
+    //implementation 'io.quarkus:quarkus-resteasy'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+
+    nativeTestImplementation 'io.quarkus:quarkus-junit5'
+    nativeTestImplementation 'io.rest-assured:rest-assured'
+}
+
+group 'my-groupId'
+version 'my-version'
+
+quarkus {
+    setOutputDirectory("$projectDir/build/classes/kotlin/main")
+}
+
+quarkusDev {
+    setSourceDir("$projectDir/src/main/kotlin")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+dependencies {
+    implementation 'io.quarkus:quarkus-kotlin'
+    implementation 'io.quarkus:quarkus-core'
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-resteasy'
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+}
